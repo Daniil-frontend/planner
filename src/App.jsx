@@ -32,8 +32,8 @@ const [week, setWeek] = useState({
     //Добавление задачи
 const addTask = async (day) => {
     if (newTaskText.trim() === '') return;
-    await axios.post('planner-production-4abf.up.railway.app/task', { day, text: newTaskText });
-    const response = await axios.get('planner-production-4abf.up.railway.app/week');
+    await axios.post('https://planner-production-4abf.up.railway.app/task', { day, text: newTaskText });
+    const response = await axios.get('https://planner-production-4abf.up.railway.app/week');
     setWeek(response.data);
     setNewTaskText('');
     setActiveDay(null);
@@ -43,21 +43,21 @@ const addTask = async (day) => {
 const toggleTask = async (day, taskId) => {
     const task = week[day].find(t => t.id === taskId);
     if (!task) return;
-    await axios.put(`planner-production-4abf.up.railway.app/task/${taskId}`, { completed: !task.completed });
-    const response = await axios.get('planner-production-4abf.up.railway.app/week');
+    await axios.put(`https://planner-production-4abf.up.railway.app/task/${taskId}`, { completed: !task.completed });
+    const response = await axios.get('https://planner-production-4abf.up.railway.app/week');
     setWeek(response.data);
 };
 
         //Удаление задачи
 const deleteTask = async (day, taskId) => {
-    await axios.delete(`planner-production-4abf.up.railway.app/task/${taskId}`);
-    const response = await axios.get('planner-production-4abf.up.railway.app/week');
+    await axios.delete(`https://planner-production-4abf.up.railway.app/task/${taskId}`);
+    const response = await axios.get('https://planner-production-4abf.up.railway.app/week');
     setWeek(response.data);
 };
 
 useEffect(() => {
     const fetchWeek = async () => {
-        const response = await axios.get('planner-production-4abf.up.railway.app/week');
+        const response = await axios.get('https://planner-production-4abf.up.railway.app/week');
         setWeek(response.data);
     };
     fetchWeek();
