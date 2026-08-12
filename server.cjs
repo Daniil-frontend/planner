@@ -88,6 +88,7 @@ app.delete('/task/:id', async (req, res) => {
     }
 });
 
-app.listen(3001, () => {
-    console.log('Сервер запущен на http://localhost:3001');
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Сервер запущен на порту ${PORT}`);
 });
