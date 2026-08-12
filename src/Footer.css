@@ -1,0 +1,112 @@
+.footer {
+    margin-top: 40px;
+    padding: 30px 20px;
+    background-color: var(--card-bg);
+    border-top: 2px solid var(--card-border);
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-secondary);
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Лёгкое свечение фона */
+.footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(0deg, rgba(99, 102, 241, 0.05) 0%, transparent 100%);
+    pointer-events: none;
+}
+
+.footer-content {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+.footer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.footer-logo {
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--header-color);
+    text-shadow: 0 0 10px var(--btn-primary), 0 0 20px var(--btn-primary), 0 0 40px var(--btn-primary);
+    letter-spacing: 3px;
+    animation: logoGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes logoGlow {
+    from {
+        text-shadow: 0 0 10px var(--btn-primary), 0 0 20px var(--btn-primary);
+    }
+    to {
+        text-shadow: 0 0 20px var(--btn-primary), 0 0 40px var(--btn-primary), 0 0 80px var(--btn-primary-hover);
+    }
+}
+
+.footer-slogan {
+    font-size: 12px;
+    color: var(--text-secondary);
+    letter-spacing: 2px;
+}
+
+.footer-links {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 10px 0;
+}
+
+/* Неоновые кнопки ссылок */
+.footer-links a {
+    color: var(--text);
+    text-decoration: none;
+    padding: 8px 20px;
+    border: 2px solid var(--btn-primary);
+    border-radius: 25px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 12px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+    box-shadow: 0 0 10px var(--btn-primary), 0 0 20px var(--btn-primary);
+    text-shadow: 0 0 5px var(--btn-primary);
+}
+
+.footer-links a:hover {
+    background-color: var(--btn-primary);
+    color: #fff;
+    box-shadow: 0 0 20px var(--btn-primary), 0 0 40px var(--btn-primary-hover), 0 0 80px var(--btn-primary);
+    text-shadow: 0 0 10px #fff;
+    transform: translateY(-2px);
+}
+
+.footer-links a:active {
+    transform: translateY(0);
+    box-shadow: 0 0 5px var(--btn-primary);
+}
+
+.footer-copy {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 10px;
+    letter-spacing: 1px;
+    opacity: 0.7;
+}
