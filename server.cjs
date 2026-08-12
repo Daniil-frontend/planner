@@ -18,11 +18,8 @@ app.use((req, res, next) => {
 
 // Подключение к базе данных
 const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'planner',
-    password: 'admin123', // ← Твой пароль
-    port: 5432,
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false },
 });
 
 // GET /week — получить все задачи, сгруппированные по дням
