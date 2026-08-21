@@ -1,15 +1,8 @@
 {
-	"dependencies": {
-		"bcrypt": "^6.0.0",
-		"jsonwebtoken": "^9.0.3"
-	}
-}
-
-{
-	"dependencies": {
-    "express": "^...",
-    "pg": "^...",
-    "bcrypt": "^...",
-    "jsonwebtoken": "^..."
-	}
+  "dependencies": {
+    "express": "^4.19.2",
+    "pg": "^8.12.0",
+    "bcrypt": "^6.0.0",
+    "jsonwebtoken": "^9.0.3"
+  }
 }
