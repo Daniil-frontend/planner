@@ -4,3 +4,12 @@
 		"jsonwebtoken": "^9.0.3"
 	}
 }
+
+{
+	"dependencies": {
+    "express": "^...",
+    "pg": "^...",
+    "bcrypt": "^...",
+    "jsonwebtoken": "^..."
+	}
+}
