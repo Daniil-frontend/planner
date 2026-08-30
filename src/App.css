@@ -27,33 +27,33 @@
     --delete-hover-color: #ef4444;
 }
 
-/* === ТЁМНАЯ ТЕМА === */
+/* === ТЁМНО-ФИОЛЕТОВАЯ ТЕМА (ПРИЗРАЧНАЯ) === */
 .dark-theme {
-    --bg: #0f172a;
-    --text: #e2e8f0;
-    --text-secondary: #94a3b8;
-    --card-bg: #1e293b;
-    --card-border: #334155;
-    --card-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
-    --header-color: #cbd5e1;
-    --header-border: #334155;
-    --task-bg: #334155;
-    --task-hover: #475569;
-    --task-completed: #64748b;
-    --progress-bg: #334155;
-    --progress-fill: #818cf8;
-    --add-btn-border: #475569;
-    --add-btn-color: #94a3b8;
-    --add-btn-hover-bg: #1e1b4b;
-    --add-btn-hover-color: #818cf8;
-    --input-bg: #1e293b;
-    --input-border: #475569;
-    --input-focus: #818cf8;
-    --btn-primary: #6366f1;
-    --btn-primary-hover: #818cf8;
-    --delete-color: #64748b;
-    --delete-hover-bg: #450a0a;
-    --delete-hover-color: #f87171;
+    --bg: #0d0414;
+    --text: #e7d9ff;
+    --text-secondary: #9b8bbd;
+    --card-bg: #160a24;
+    --card-border: #3a1f5e;
+    --card-shadow: 0 0 25px rgba(106, 13, 173, 0.35);
+    --header-color: #b388ff;
+    --header-border: #4a1d78;
+    --task-bg: #1e0f36;
+    --task-hover: #2a1547;
+    --task-completed: #6b5b8a;
+    --progress-bg: #261543;
+    --progress-fill: #9b30ff;
+    --add-btn-border: #5e2b9e;
+    --add-btn-color: #b9a1e6;
+    --add-btn-hover-bg: #1a0a2e;
+    --add-btn-hover-color: #c26bff;
+    --input-bg: #120720;
+    --input-border: #4a1d78;
+    --input-focus: #b388ff;
+    --btn-primary: #7b1fa2;
+    --btn-primary-hover: #9b30ff;
+    --delete-color: #6b5b8a;
+    --delete-hover-bg: #2a0a2e;
+    --delete-hover-color: #ff6ec7;
 }
 
 /* === ОБЩИЕ СТИЛИ === */

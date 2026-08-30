@@ -4,6 +4,44 @@ import "./App.css";
 import axios from "axios";
 
 const App = () => {
+
+const [token, setToken] = useState(localStorage.getItem('token') || '');
+const [username, setUsername] = useState('');
+const [password, setPassword] = useState('');
+const [isRegister, setIsRegister] = useState(false);
+const [authError, setAuthError] = useState('');
+
+const handleAuth = async (e) => {
+    e.preventDefault(); // не даем странице перезагрузиться
+    try {
+        if (isRegister){
+            //Регистрация
+            await axios.post('https://planner-production-4abf.up.railway.app/register', {
+                username,
+                password,
+            }),
+            setAuthError('Молодец! Теперь сделай вход.');
+            setIsRegister(false); //Переключаем на вход
+        } else {
+            //Вход
+            const response = await axios.post('https://planner-production-4abf.up.railway.app/login', {
+                username,
+                password,
+            });
+            const token = response.data.token;
+            localStorage.setItem('token', token);
+            setToken(token);
+            setAuthError('');
+        }
+    } catch (err) {
+        setAuthError(err.response?.data?.error || 'Ошибочка вышла!');
+    }
+
+    setUsername('');
+    setPassword('');
+};
+
+
 const [week, setWeek] = useState({
     monday: [],
     tuesday: [],
@@ -13,8 +51,8 @@ const [week, setWeek] = useState({
     saturday: [],
     sunday: [],
 });
-    const [activeDay, setActiveDay] = useState(null);
-    const days = [
+const [activeDay, setActiveDay] = useState(null);
+const days = [
         "monday",
         "tuesday",
         "wednesday",
@@ -24,16 +62,20 @@ const [week, setWeek] = useState({
         "sunday",
     ];
 
-    const [newTaskText, setNewTaskText] = useState("");
-    const [theme, setTheme] = useState('light');
-    const themes = ['light', 'dark', 'gothic'];
-    const themeIcons = { light: '☀️', dark: '🌙', gothic: '🦇' };
+const [newTaskText, setNewTaskText] = useState("");
+const [theme, setTheme] = useState('light');
+const themes = ['light', 'dark', 'gothic'];
+const themeIcons = { light: '☀️', dark: '🌙', gothic: '🦇' };
 
     //Добавление задачи
 const addTask = async (day) => {
     if (newTaskText.trim() === '') return;
-    await axios.post('https://planner-production-4abf.up.railway.app/task', { day, text: newTaskText });
-    const response = await axios.get('https://planner-production-4abf.up.railway.app/week');
+    await axios.post('https://planner-production-4abf.up.railway.app/task', { day, text: newTaskText }, {
+        headers:{ Authorization: `Bearer ${token}`}
+    });
+    const response = await axios.get('https://planner-production-4abf.up.railway.app/week', {
+        headers: { Authorization: `Bearer ${token}`}
+});
     setWeek(response.data);
     setNewTaskText('');
     setActiveDay(null);
@@ -43,21 +85,31 @@ const addTask = async (day) => {
 const toggleTask = async (day, taskId) => {
     const task = week[day].find(t => t.id === taskId);
     if (!task) return;
-    await axios.put(`https://planner-production-4abf.up.railway.app/task/${taskId}`, { completed: !task.completed });
-    const response = await axios.get('https://planner-production-4abf.up.railway.app/week');
+    await axios.put(`https://planner-production-4abf.up.railway.app/task/${taskId}`, { completed: !task.completed }, {
+        headers: { Authorization: `Bearer ${token}`}
+    });
+    const response = await axios.get('https://planner-production-4abf.up.railway.app/week', {
+        headers: { Authorization: `Bearer ${token}`}
+    });
     setWeek(response.data);
 };
 
         //Удаление задачи
 const deleteTask = async (day, taskId) => {
-    await axios.delete(`https://planner-production-4abf.up.railway.app/task/${taskId}`);
-    const response = await axios.get('https://planner-production-4abf.up.railway.app/week');
+    await axios.delete(`https://planner-production-4abf.up.railway.app/task/${taskId}`, {
+        headers: { Authorization: `Bearer ${token}`}
+    });
+    const response = await axios.get('https://planner-production-4abf.up.railway.app/week', {
+        headers: { Authorization: `Bearer ${token}` }
+    });
     setWeek(response.data);
 };
 
 useEffect(() => {
     const fetchWeek = async () => {
-        const response = await axios.get('https://planner-production-4abf.up.railway.app/week');
+        const response = await axios.get('https://planner-production-4abf.up.railway.app/week', {
+            headers: { Authorization: `Bearer ${token}` }
+        });
         setWeek(response.data);
     };
     fetchWeek();
@@ -75,7 +127,40 @@ useEffect(() => {
     }
 }, [theme]);
 
+//проверка подключения
+if (!token) {
+    return (
+        <div className="App">
+            <h1>{isRegister ? 'Регистрация' : 'Вход'}</h1>
+            <form onSubmit={handleAuth}>
+                <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Логин"
+                    required
+                />
+                <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Пароль"
+                    required
+                />
+                <button type="submit">
+                    {isRegister ? 'Зарегистрироваться' : 'Войти'}
+                </button>
+            </form>
+            <button onClick={() => setIsRegister(!isRegister)}>
+                {isRegister ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрироваться'}
+            </button>
+            {authError && <p>{authError}</p>}
+        </div>
+    );
+}
+
 return (
+    
     <div className={`App ${theme === 'dark' ? 'dark-theme' : theme === 'gothic' ? 'gothic-theme' : ''}`}>
 <button
     onClick={() => {
