@@ -1,5 +1,5 @@
 {
-  "name": "planner",
+  "name": "week-planner-v2",
   "dependencies": {
     "express": "^4.19.2",
     "pg": "^8.12.0",
