@@ -129,32 +129,25 @@ useEffect(() => {
 
 //проверка подключения
 if (!token) {
+
     return (
         <div className="App">
-            <h1>{isRegister ? 'Регистрация' : 'Вход'}</h1>
+            <h1>Форма входа</h1>
             <form onSubmit={handleAuth}>
-                <input
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Логин"
-                    required
+                <input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Логин"
+                required
                 />
-                <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Пароль"
-                    required
+                <input value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Пароль"
+                required
                 />
                 <button type="submit">
-                    {isRegister ? 'Зарегистрироваться' : 'Войти'}
+                    {isRegister ? 'Зарегестрироваться' : 'Войти'}
                 </button>
             </form>
-            <button onClick={() => setIsRegister(!isRegister)}>
+            <button className="switch-auth-btn" onClick={() => setIsRegister(!isRegister)}>
                 {isRegister ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрироваться'}
             </button>
-            {authError && <p>{authError}</p>}
+            {authError && <p className="auth-error">{authError}</p>}
         </div>
     );
 }
