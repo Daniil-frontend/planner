@@ -65,10 +65,10 @@ const themeIcons = { light: '☀️', dark: '🌙', gothic: '🦇' };
     //Добавление задачи
 const addTask = async (day) => {
     if (newTaskText.trim() === '') return;
-    await axios.post('planner-production-bca1.up.railway.app/task', { day, text: newTaskText }, {
+    await axios.post('https://planner-production-bca1.up.railway.app/task', { day, text: newTaskText }, {
         headers:{ Authorization: `Bearer ${token}`}
     });
-    const response = await axios.get('planner-production-bca1.up.railway.app/week', {
+    const response = await axios.get('https://planner-production-bca1.up.railway.app/week', {
         headers: { Authorization: `Bearer ${token}`}
 });
     setWeek(response.data);
@@ -80,10 +80,10 @@ const addTask = async (day) => {
 const toggleTask = async (day, taskId) => {
     const task = week[day].find(t => t.id === taskId);
     if (!task) return;
-    await axios.put(`planner-production-bca1.up.railway.app/task/${taskId}`, { completed: !task.completed }, {
+    await axios.put(`https://planner-production-bca1.up.railway.app/task/${taskId}`, { completed: !task.completed }, {
         headers: { Authorization: `Bearer ${token}`}
     });
-    const response = await axios.get('planner-production-bca1.up.railway.app/week', {
+    const response = await axios.get('https://planner-production-bca1.up.railway.app/week', {
         headers: { Authorization: `Bearer ${token}`}
     });
     setWeek(response.data);
@@ -91,10 +91,10 @@ const toggleTask = async (day, taskId) => {
 
         //Удаление задачи
 const deleteTask = async (day, taskId) => {
-    await axios.delete(`planner-production-bca1.up.railway.app/task/${taskId}`, {
+    await axios.delete(`https://planner-production-bca1.up.railway.app/task/${taskId}`, {
         headers: { Authorization: `Bearer ${token}`}
     });
-    const response = await axios.get('planner-production-bca1.up.railway.app/week', {
+    const response = await axios.get('https://planner-production-bca1.up.railway.app/week', {
         headers: { Authorization: `Bearer ${token}` }
     });
     setWeek(response.data);
@@ -102,7 +102,7 @@ const deleteTask = async (day, taskId) => {
 
 useEffect(() => {
     const fetchWeek = async () => {
-        const response = await axios.get('planner-production-bca1.up.railway.app/week', {
+        const response = await axios.get('https://planner-production-bca1.up.railway.app/week', {
             headers: { Authorization: `Bearer ${token}` }
         });
         setWeek(response.data);
