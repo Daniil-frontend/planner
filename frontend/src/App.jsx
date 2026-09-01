@@ -171,7 +171,17 @@ return (
 >
     {themeIcons[theme]}
 </button>
-    {theme === 'gothic' && <div className="ghost">👻</div>}
+    {theme === 'gothic' && (
+    <div className="ghost-container">
+        <div className="ghost-body">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+)}
         <h1>Task Planner</h1>
 
         <div className="week-grid">

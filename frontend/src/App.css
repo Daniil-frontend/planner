@@ -349,36 +349,79 @@ form button:active {
     box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
 }
 
-.ghost {
+.ghost-container {
     position: fixed;
     top: 50%;
-    left: 50%;
-    font-size: 60px;
-    animation: floatGhost 6s ease-in-out infinite;
+    left: 0;
+    width: 100%;
+    height: 200px;
     pointer-events: none;
     z-index: 999;
-    opacity: 0.8;
+    overflow: hidden;
 }
 
-@keyframes floatGhost {
+.ghost-body {
+    position: absolute;
+    width: 40px;
+    height: 60px;
+    background-color: #e7e6e6;
+    border-radius: 100% / 70% 70% 0% 0%;
+    animation: ghostMove 8s ease-in-out infinite;
+    opacity: 0.8;
+    left: 50%;
+    top: 50%;
+}
+
+.ghost-body div {
+    position: absolute;
+    width: 8px;
+    background-color: #e7e6e6;
+}
+
+.ghost-body div:nth-child(1) {
+    height: 25px;
+    left: 0;
+    bottom: -22px;
+    border-radius: 100% / 0% 0% 50% 50%;
+}
+
+.ghost-body div:nth-child(2),
+.ghost-body div:nth-child(4) {
+    height: 18px;
+    left: 8px;
+    bottom: -15px;
+    border-radius: 100% / 50% 50% 0% 0%;
+    background-color: transparent;
+}
+
+.ghost-body div:nth-child(3) {
+    height: 18px;
+    left: 16px;
+    bottom: -17px;
+    border-radius: 100% / 0% 0% 60% 60%;
+    background-color: #e7e6e6;
+}
+
+.ghost-body div:nth-child(4) {
+    left: 24px;
+}
+
+.ghost-body div:nth-child(5) {
+    height: 15px;
+    left: 32px;
+    bottom: -14px;
+    border-radius: 100% / 0% 0% 70% 70%;
+    background-color: #e7e6e6;
+}
+
+@keyframes ghostMove {
     0% {
-        transform: translate(-50%, -50%) translateX(-120px) translateY(0) rotate(-5deg);
-        opacity: 0.4;
-    }
-    25% {
-        transform: translate(-50%, -50%) translateX(-60px) translateY(-25px) rotate(5deg);
-        opacity: 0.8;
+        transform: translate(-50%, -50%) translateX(-200px) rotate(-5deg);
     }
     50% {
-        transform: translate(-50%, -50%) translateX(0) translateY(0) rotate(-5deg);
-        opacity: 0.6;
-    }
-    75% {
-        transform: translate(-50%, -50%) translateX(60px) translateY(25px) rotate(5deg);
-        opacity: 0.8;
+        transform: translate(-50%, -50%) translateX(200px) rotate(5deg);
     }
     100% {
-        transform: translate(-50%, -50%) translateX(120px) translateY(0) rotate(-5deg);
-        opacity: 0.4;
+        transform: translate(-50%, -50%) translateX(-200px) rotate(-5deg);
     }
 }
