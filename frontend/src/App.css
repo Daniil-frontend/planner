@@ -349,79 +349,90 @@ form button:active {
     box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
 }
 
-.ghost-container {
-    position: fixed;
-    top: 50%;
-    left: 0;
-    width: 100%;
-    height: 200px;
-    pointer-events: none;
-    z-index: 999;
-    overflow: hidden;
-}
-
 .ghost-body {
-    position: absolute;
-    width: 40px;
-    height: 60px;
+    position: fixed;
+    top: 40%;
+    left: 110%;
+    width: 120px;
+    height: 180px;
     background-color: #e7e6e6;
     border-radius: 100% / 70% 70% 0% 0%;
-    animation: ghostMove 8s ease-in-out infinite;
-    opacity: 0.8;
-    left: 50%;
-    top: 50%;
+    animation: ghostFly 4s ease-in forwards;
+    z-index: 999;
+    pointer-events: none;
 }
 
+/* Рожа: чёрные круглые глаза */
+.ghost-body::before,
+.ghost-body::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background-color: #000;
+    border-radius: 50%;
+    top: 50px;
+}
+
+.ghost-body::before {
+    left: 35px;
+}
+
+.ghost-body::after {
+    right: 35px;
+}
+
+/* Нижние "штанишки" */
 .ghost-body div {
     position: absolute;
-    width: 8px;
+    width: 20%;
     background-color: #e7e6e6;
 }
 
 .ghost-body div:nth-child(1) {
-    height: 25px;
+    height: 45px;
     left: 0;
-    bottom: -22px;
+    bottom: -40px;
     border-radius: 100% / 0% 0% 50% 50%;
 }
 
 .ghost-body div:nth-child(2),
 .ghost-body div:nth-child(4) {
-    height: 18px;
-    left: 8px;
-    bottom: -15px;
+    height: 30px;
+    left: 20%;
+    bottom: -25px;
     border-radius: 100% / 50% 50% 0% 0%;
     background-color: transparent;
 }
 
 .ghost-body div:nth-child(3) {
-    height: 18px;
-    left: 16px;
-    bottom: -17px;
+    height: 30px;
+    left: 40%;
+    bottom: -32px;
     border-radius: 100% / 0% 0% 60% 60%;
-    background-color: #e7e6e6;
 }
 
 .ghost-body div:nth-child(4) {
-    left: 24px;
+    left: 60%;
 }
 
 .ghost-body div:nth-child(5) {
-    height: 15px;
-    left: 32px;
-    bottom: -14px;
+    height: 25px;
+    left: 80%;
+    bottom: -28px;
     border-radius: 100% / 0% 0% 70% 70%;
-    background-color: #e7e6e6;
 }
 
-@keyframes ghostMove {
+@keyframes ghostFly {
     0% {
-        transform: translate(-50%, -50%) translateX(-200px) rotate(-5deg);
+        left: 110%;
+        opacity: 1;
     }
-    50% {
-        transform: translate(-50%, -50%) translateX(200px) rotate(5deg);
+    80% {
+        opacity: 1;
     }
     100% {
-        transform: translate(-50%, -50%) translateX(-200px) rotate(-5deg);
+        left: -30%;
+        opacity: 0;
     }
 }
