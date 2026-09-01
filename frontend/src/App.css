@@ -348,3 +348,37 @@ form button:active {
     background-color: var(--btn-primary-hover);
     box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
 }
+
+.ghost {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    font-size: 60px;
+    animation: floatGhost 6s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.8;
+}
+
+@keyframes floatGhost {
+    0% {
+        transform: translate(-50%, -50%) translateX(-120px) translateY(0) rotate(-5deg);
+        opacity: 0.4;
+    }
+    25% {
+        transform: translate(-50%, -50%) translateX(-60px) translateY(-25px) rotate(5deg);
+        opacity: 0.8;
+    }
+    50% {
+        transform: translate(-50%, -50%) translateX(0) translateY(0) rotate(-5deg);
+        opacity: 0.6;
+    }
+    75% {
+        transform: translate(-50%, -50%) translateX(60px) translateY(25px) rotate(5deg);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translate(-50%, -50%) translateX(120px) translateY(0) rotate(-5deg);
+        opacity: 0.4;
+    }
+}

@@ -171,6 +171,7 @@ return (
 >
     {themeIcons[theme]}
 </button>
+    {theme === 'gothic' && <div className="ghost">👻</div>}
         <h1>Task Planner</h1>
 
         <div className="week-grid">
