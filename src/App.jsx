@@ -12,22 +12,18 @@ const [isRegister, setIsRegister] = useState(false);
 const [authError, setAuthError] = useState('');
 
 const handleAuth = async (e) => {
-    e.preventDefault(); // не даем странице перезагрузиться
+    e.preventDefault();
     try {
-        if (isRegister){
-            //Регистрация
-            await axios.post('planner-production-bca1.up.railway.app/register', {
-                username,
-                password,
-            }),
-            setAuthError('Молодец! Теперь сделай вход.');
-            setIsRegister(false); //Переключаем на вход
+        if (isRegister) {
+            await axios.post('https://твой-домен.up.railway.app/register', { username, password });
+            // После регистрации сразу логиним
+            const response = await axios.post('https://твой-домен.up.railway.app/login', { username, password });
+            const token = response.data.token;
+            localStorage.setItem('token', token);
+            setToken(token);
+            setAuthError('');
         } else {
-            //Вход
-            const response = await axios.post('planner-production-bca1.up.railway.app/login', {
-                username,
-                password,
-            });
+            const response = await axios.post('https://твой-домен.up.railway.app/login', { username, password });
             const token = response.data.token;
             localStorage.setItem('token', token);
             setToken(token);
@@ -36,7 +32,6 @@ const handleAuth = async (e) => {
     } catch (err) {
         setAuthError(err.response?.data?.error || 'Ошибочка вышла!');
     }
-
     setUsername('');
     setPassword('');
 };
