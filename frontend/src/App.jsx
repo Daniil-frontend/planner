@@ -15,15 +15,15 @@ const handleAuth = async (e) => {
     e.preventDefault();
     try {
         if (isRegister) {
-            await axios.post('https://твой-домен.up.railway.app/register', { username, password });
+            await axios.post('https://planner-production-bca1.up.railway.app/register', { username, password });
             // После регистрации сразу логиним
-            const response = await axios.post('https://твой-домен.up.railway.app/login', { username, password });
+            const response = await axios.post('https://planner-production-bca1.up.railway.app/login', { username, password });
             const token = response.data.token;
             localStorage.setItem('token', token);
             setToken(token);
             setAuthError('');
         } else {
-            const response = await axios.post('https://твой-домен.up.railway.app/login', { username, password });
+            const response = await axios.post('https://planner-production-bca1.up.railway.app/login', { username, password });
             const token = response.data.token;
             localStorage.setItem('token', token);
             setToken(token);
