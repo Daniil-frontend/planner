@@ -108,7 +108,7 @@ useEffect(() => {
         setWeek(response.data);
     };
     fetchWeek();
-}, []);
+}, [token]);
 
     useEffect(() => {
     if (theme === 'dark') {
