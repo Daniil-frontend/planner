@@ -15,15 +15,15 @@ const handleAuth = async (e) => {
     e.preventDefault();
     try {
         if (isRegister) {
-            await axios.post('https://plannercat.online/register', { username, password });
+            await axios.post('https://api.plannercat.online/register', { username, password });
             // После регистрации сразу логиним
-            const response = await axios.post('https://plannercat.online/login', { username, password });
+            const response = await axios.post('https://api.plannercat.online/login', { username, password });
             const token = response.data.token;
             localStorage.setItem('token', token);
             setToken(token);
             setAuthError('');
         } else {
-            const response = await axios.post('https://plannercat.online/login', { username, password });
+            const response = await axios.post('https://api.plannercat.online/login', { username, password });
             const token = response.data.token;
             localStorage.setItem('token', token);
             setToken(token);
@@ -65,10 +65,10 @@ const themeIcons = { light: '☀️', dark: '🌙', gothic: '🦇' };
     //Добавление задачи
 const addTask = async (day) => {
     if (newTaskText.trim() === '') return;
-    await axios.post('https://plannercat.online/task', { day, text: newTaskText }, {
+    await axios.post('https://api.plannercat.online/task', { day, text: newTaskText }, {
         headers:{ Authorization: `Bearer ${token}`}
     });
-    const response = await axios.get('https://plannercat.online/week', {
+    const response = await axios.get('https://api.plannercat.online/week', {
         headers: { Authorization: `Bearer ${token}`}
 });
     setWeek(response.data);
@@ -80,10 +80,10 @@ const addTask = async (day) => {
 const toggleTask = async (day, taskId) => {
     const task = week[day].find(t => t.id === taskId);
     if (!task) return;
-    await axios.put(`https://plannercat.online/task/${taskId}`, { completed: !task.completed }, {
+    await axios.put(`https://api.plannercat.online/task/${taskId}`, { completed: !task.completed }, {
         headers: { Authorization: `Bearer ${token}`}
     });
-    const response = await axios.get('https://plannercat.online/week', {
+    const response = await axios.get('https://api.plannercat.online/week', {
         headers: { Authorization: `Bearer ${token}`}
     });
     setWeek(response.data);
@@ -91,10 +91,10 @@ const toggleTask = async (day, taskId) => {
 
         //Удаление задачи
 const deleteTask = async (day, taskId) => {
-    await axios.delete(`https://plannercat.online/task/${taskId}`, {
+    await axios.delete(`https://api.plannercat.online/task/${taskId}`, {
         headers: { Authorization: `Bearer ${token}`}
     });
-    const response = await axios.get('https://plannercat.online/week', {
+    const response = await axios.get('https://api.plannercat.online/week', {
         headers: { Authorization: `Bearer ${token}` }
     });
     setWeek(response.data);
@@ -102,7 +102,7 @@ const deleteTask = async (day, taskId) => {
 
 useEffect(() => {
     const fetchWeek = async () => {
-        const response = await axios.get('https://plannercat.online/week', {
+        const response = await axios.get('https://api.plannercat.online/week', {
             headers: { Authorization: `Bearer ${token}` }
         });
         setWeek(response.data);
