@@ -1,0 +1,507 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg);
+    font-family: $font-body;
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: $font-heading;
+    font-weight: 800;
+}
+
+::-webkit-scrollbar {
+    width: 4px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+// === GHOST (готическая тема) ===
+.ghost-container {
+    position: fixed;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 200px;
+    pointer-events: none;
+    z-index: 999;
+    overflow: hidden;
+}
+
+.ghost-body {
+    position: absolute;
+    width: 40px;
+    height: 60px;
+    background-color: #e7e6e6;
+    border-radius: 100% / 70% 70% 0% 0%;
+    animation: ghostMove 6s linear 1 forwards;
+    opacity: 0.8;
+    left: 0;
+    top: 50%;
+}
+
+.ghost-body::before,
+.ghost-body::after {
+    content: '';
+    position: absolute;
+    top: 22px;
+    width: 7px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #1a1a1a;
+    z-index: 1;
+}
+
+.ghost-body::before {
+    left: 10px;
+}
+
+.ghost-body::after {
+    right: 10px;
+}
+
+.ghost-body div {
+    position: absolute;
+    width: 8px;
+    background-color: #e7e6e6;
+}
+
+.ghost-body div:nth-child(1) {
+    height: 25px;
+    left: 0;
+    bottom: -22px;
+    border-radius: 100% / 0% 0% 50% 50%;
+}
+
+.ghost-body div:nth-child(2),
+.ghost-body div:nth-child(4) {
+    height: 18px;
+    left: 8px;
+    bottom: -15px;
+    border-radius: 100% / 50% 50% 0% 0%;
+    background-color: transparent;
+}
+
+.ghost-body div:nth-child(3) {
+    height: 18px;
+    left: 16px;
+    bottom: -17px;
+    border-radius: 100% / 0% 0% 60% 60%;
+    background-color: #e7e6e6;
+}
+
+.ghost-body div:nth-child(4) {
+    left: 24px;
+}
+
+.ghost-body div:nth-child(5) {
+    height: 15px;
+    left: 32px;
+    bottom: -14px;
+    border-radius: 100% / 0% 0% 70% 70%;
+    background-color: #e7e6e6;
+}
+
+@keyframes ghostMove {
+    0% {
+        transform: translate(-120px, -50%) scale(1.8) rotate(-5deg);
+    }
+    50% {
+        transform: translate(50vw, -50%) scale(1.8) rotate(5deg);
+    }
+    100% {
+        transform: translate(calc(100vw + 120px), -50%) scale(1.8) rotate(-5deg);
+    }
+}
+
+// === ТЕМЫ ===
+
+:root {
+    --bg: #F5F0E6;
+    --text: #1A1A1A;
+    --card-bg: #FFFFFF;
+    --card-border: #1A1A1A;
+    --header-color: #1A1A1A;
+    --task-bg: #F9F8F6;
+    --progress-bg: #E0E5EC;
+    --progress-fill: #D4AF37;
+    --input-bg: #F9F8F6;
+    --input-border: #1A1A1A;
+    --btn-primary: #1A1A1A;
+    --btn-primary-hover: #1A1A1A;
+    --border: #E5E7EB;
+    --muted: #6B7280;
+}
+
+.dark-theme {
+    --bg: #0d0414;
+    --text: #e7d9ff;
+    --card-bg: #160a24;
+    --card-border: #3a1f5e;
+    --header-color: #b388ff;
+    --task-bg: #1e0f36;
+    --progress-bg: #261543;
+    --progress-fill: #9b30ff;
+    --input-bg: #120720;
+    --input-border: #4a1d78;
+    --btn-primary: #7b1fa2;
+    --btn-primary-hover: #9b30ff;
+    --border: #3a1f5e;
+    --muted: #ad9bc7;
+}
+
+.gothic-theme {
+    --bg: #0a0a0a;
+    --text: #c0c0c0;
+    --card-bg: #111111;
+    --card-border: #333333;
+    --header-color: #8b0000;
+    --task-bg: #1a1a1a;
+    --progress-bg: #1a1a1a;
+    --progress-fill: #8b0000;
+    --input-bg: #111111;
+    --input-border: #8b0000;
+    --btn-primary: #8b0000;
+    --btn-primary-hover: #ff0000;
+    --border: #333333;
+    --muted: #999999;
+    font-family: 'Cinzel', serif;
+}
+
+// === Сетка недели ===
+.week-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    align-items: flex-start;
+
+    @media (max-width: 1000px) {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    @media (max-width: 600px) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+// === Заголовок страницы ===
+.page-header {
+    text-align: center;
+    margin-bottom: 40px;
+
+    h1 {
+        font-size: 36px;
+        font-weight: 900;
+        color: var(--text);
+        margin-bottom: 8px;
+    }
+
+    p {
+        font-size: 16px;
+        color: var(--muted);
+        font-weight: 500;
+    }
+}
+
+// === Форма добавления задачи ===
+.add-task-form {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--card-bg);
+    border: 2px solid var(--card-border);
+    border-radius: $radius-lg;
+    box-shadow: $shadow-md;
+    padding: 16px;
+    z-index: 50;
+
+    form {
+        display: flex;
+        gap: 8px;
+    }
+
+    input {
+        padding: 10px 16px;
+        border: 2px solid var(--card-border);
+        background: var(--input-bg);
+        color: var(--text);
+        border-radius: $radius-md;
+        font-size: 14px;
+        outline: none;
+        min-width: 200px;
+    }
+
+    button {
+        @include neo-button;
+        font-size: 14px;
+    }
+}
+
+// === Кнопка смены темы ===
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    &__current {
+        width: 58px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        background: var(--card-bg);
+        border: 2px solid var(--card-border);
+        border-radius: 12px;
+        color: var(--text);
+        font-size: 22px;
+        cursor: pointer;
+    }
+
+    &__arrow {
+        font-size: 11px;
+        transition: transform 0.15s ease;
+    }
+
+    &--open &__arrow {
+        transform: rotate(180deg);
+    }
+
+    &__menu {
+        display: none;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 6px;
+    }
+
+    &--open &__menu {
+        display: flex;
+    }
+
+    &__button {
+        width: 42px;
+        height: 42px;
+        background: var(--card-bg);
+        border: 2px solid var(--card-border);
+        border-radius: 50%;
+        color: var(--text);
+        font-size: 22px;
+        cursor: pointer;
+        transition: transform 0.15s ease, background-color 0.15s ease;
+
+        &:hover {
+            transform: scale(1.1);
+        }
+
+        &--active {
+            background: var(--progress-bg);
+            box-shadow: 2px 2px 0 var(--card-border);
+        }
+    }
+}
+
+// Components use these shared values so the theme switch updates the whole UI.
+.App {
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.header,
+.footer {
+    background: var(--card-bg);
+    border-color: var(--card-border);
+    color: var(--text);
+}
+
+.header__logo-circle,
+.footer__logo-circle {
+    background: var(--progress-bg);
+    border-color: var(--card-border);
+}
+
+.header__logo-svg,
+.header__logo-text,
+.header__title,
+.footer__logo-svg,
+.footer__brand-text,
+.day-card__title,
+.day-card__progress-text,
+.auth-modal__title {
+    color: var(--text);
+    fill: var(--text);
+}
+
+.header__btn,
+.auth-modal__close,
+.auth-modal__submit {
+    border-color: var(--card-border);
+    color: var(--text);
+}
+
+.header__btn--filled,
+.auth-modal__submit {
+    background: var(--btn-primary);
+    color: var(--bg);
+}
+
+.day-card,
+.auth-modal__window {
+    background: var(--card-bg);
+    border-color: var(--card-border);
+    color: var(--text);
+}
+
+.day-card__header {
+    border-color: var(--border);
+}
+
+.day-card__progress-bg {
+    stroke: var(--progress-bg);
+}
+
+.day-card__progress-fill {
+    stroke: var(--progress-fill);
+}
+
+.day-card__add-btn,
+.auth-modal__field input {
+    border-color: var(--border);
+    background: var(--input-bg);
+    color: var(--text);
+}
+
+.task-item {
+    background: var(--task-bg);
+    border-color: var(--border);
+}
+
+.task-item__text {
+    color: var(--text);
+}
+
+.footer__tagline,
+.auth-modal__switch {
+    color: var(--muted);
+}
+
+.footer__copy {
+    border-color: var(--border);
+}
+
+// === Внешний вид готической темы ===
+.gothic-theme {
+    background: #080808;
+    color: #c9c9c9;
+    font-family: 'Cinzel', serif;
+}
+
+.gothic-theme .page-header {
+    margin-bottom: 32px;
+}
+
+.gothic-theme .page-header h1,
+.gothic-theme .header__title,
+.gothic-theme .header__logo-text,
+.gothic-theme .footer__brand-text {
+    color: #8b0000;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 3px;
+}
+
+.gothic-theme .page-header p,
+.gothic-theme .footer__tagline {
+    color: #888888;
+}
+
+.gothic-theme .header,
+.gothic-theme .footer {
+    background: #080808;
+    border-color: #333333;
+}
+
+.gothic-theme .day-card {
+    min-height: 435px;
+    background: #111111;
+    border: 2px solid #333333;
+    border-radius: 0;
+    box-shadow: 6px 6px 0 #050505;
+}
+
+.gothic-theme .day-card__header {
+    border-bottom: 2px solid #8b0000;
+}
+
+.gothic-theme .day-card__title {
+    color: #b00000;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 3px;
+}
+
+.gothic-theme .day-card__progress-bg {
+    stroke: #1b1b1b;
+}
+
+.gothic-theme .day-card__progress-fill {
+    stroke: #8b0000;
+}
+
+.gothic-theme .day-card__progress-text,
+.gothic-theme .day-card__empty {
+    color: #bdbdbd;
+}
+
+.gothic-theme .day-card__add-btn {
+    border: 1px solid #8b0000;
+    border-radius: 0;
+    background: transparent;
+    color: #c9c9c9;
+}
+
+.gothic-theme .day-card__add-btn:hover {
+    background: #8b0000;
+    color: #ffffff;
+}
+
+.gothic-theme .task-item {
+    background: #151515;
+    border-color: #333333;
+}
+
+.gothic-theme .task-item__text {
+    color: #c9c9c9;
+}
+
+.gothic-theme .task-item__checkbox {
+    accent-color: #8b0000;
+}
+
+.gothic-theme .footer__copy {
+    border-color: #333333;
+}

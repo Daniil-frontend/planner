@@ -1,43 +1,98 @@
 import { useEffect, useState } from "react";
-import Footer from './Footer'
-import "./App.css";
+import Footer from "../components/Footer/Footer";
+import Header from "../components/Header/Header";
+import DayCard from "../components/DayCard/DayCard";
+import AuthModal from "../components/AuthModal/AuthModal";
+import Toast from "../components/Toast/Toast";
 import axios from "axios";
 
 const App = () => {
+  // === AUTH: состояния ===
+  // Токен берём из localStorage, если он там есть
+  const [token, setToken] = useState(localStorage.getItem("token") || "");
+  // Поля для формы логина/регистрации
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  // Ошибка авторизации
+  const [authError, setAuthError] = useState("");
+  // Открыта ли модалка
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  // Режим модалки: 'signin' или 'signup'
+  const [authMode, setAuthMode] = useState("signin");
 
-const [token, setToken] = useState(localStorage.getItem('token') || '');
-const [username, setUsername] = useState('');
-const [password, setPassword] = useState('');
-const [isRegister, setIsRegister] = useState(false);
-const [authError, setAuthError] = useState('');
+  // === TOAST: состояния ===
+  // Сообщение и видимость уведомления
+  const [toastMessage, setToastMessage] = useState("");
+  const [isToastVisible, setIsToastVisible] = useState(false);
 
-const handleAuth = async (e) => {
-    e.preventDefault();
+  // === TOAST: показать уведомление ===
+  const showToast = (message) => {
+    setToastMessage(message);
+    setIsToastVisible(true);
+  };
+
+  // === AUTH: обработка формы ===
+  // Принимает объект { username, password, mode } из AuthModal
+  const handleAuth = async ({ username, password, mode }) => {
     try {
-        if (isRegister) {
-            await axios.post('https://api.plannercat.online/register', { username, password });
-            // После регистрации сразу логиним
-            const response = await axios.post('https://api.plannercat.online/login', { username, password });
-            const token = response.data.token;
-            localStorage.setItem('token', token);
-            setToken(token);
-            setAuthError('');
-        } else {
-            const response = await axios.post('https://api.plannercat.online/login', { username, password });
-            const token = response.data.token;
-            localStorage.setItem('token', token);
-            setToken(token);
-            setAuthError('');
-        }
+      if (mode === "signup") {
+        // Регистрация, потом сразу логин
+        await axios.post("https://api.plannercat.online/register", {
+          username,
+          password,
+        });
+        const response = await axios.post(
+          "https://api.plannercat.online/login",
+          { username, password },
+        );
+        const token = response.data.token;
+        localStorage.setItem("token", token);
+        setToken(token);
+        setAuthError("");
+        showToast("Аккаунт создан! 🎉");
+      } else {
+        // Вход
+        const response = await axios.post(
+          "https://api.plannercat.online/login",
+          { username, password },
+        );
+        const token = response.data.token;
+        localStorage.setItem("token", token);
+        setToken(token);
+        setAuthError("");
+        showToast("Успешный вход! ✨");
+      }
+      closeModal(); // Закрываем модалку после успеха
     } catch (err) {
-        setAuthError(err.response?.data?.error || 'Ошибочка вышла!');
+      setAuthError(err.response?.data?.error || "Ошибочка вышла!");
+      showToast(
+        "Ошибка: " + (err.response?.data?.error || "что-то пошло не так"),
+      );
     }
-    setUsername('');
-    setPassword('');
-};
+  };
 
+  // === AUTH: управление модалкой ===
+  const openSignIn = () => {
+    setAuthMode("signin");
+    setIsModalOpen(true);
+  };
 
-const [week, setWeek] = useState({
+  const openSignUp = () => {
+    setAuthMode("signup");
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const switchMode = () => {
+    setAuthMode(authMode === "signin" ? "signup" : "signin");
+  };
+
+  // === TASKS: состояния ===
+  // Данные недели (задачи по дням)
+  const [week, setWeek] = useState({
     monday: [],
     tuesday: [],
     wednesday: [],
@@ -45,251 +100,246 @@ const [week, setWeek] = useState({
     friday: [],
     saturday: [],
     sunday: [],
-});
-const [activeDay, setActiveDay] = useState(null);
-const days = [
-        "monday",
-        "tuesday",
-        "wednesday",
-        "thursday",
-        "friday",
-        "saturday",
-        "sunday",
-    ];
+  });
 
-const [newTaskText, setNewTaskText] = useState("");
-const [theme, setTheme] = useState('light');
-const themes = ['light', 'dark', 'gothic'];
-const themeIcons = { light: '☀️', dark: '🌙', gothic: '🦇' };
+  // Какой день выбран для добавления задачи
+  const [activeDay, setActiveDay] = useState(null);
+  // Текст новой задачи
+  const [newTaskText, setNewTaskText] = useState("");
+  // Тема оформления
+  const [theme, setTheme] = useState("light");
+  const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
 
-    //Добавление задачи
-const addTask = async (day) => {
-    if (newTaskText.trim() === '') return;
-    await axios.post('https://api.plannercat.online/task', { day, text: newTaskText }, {
-        headers:{ Authorization: `Bearer ${token}`}
+  // Список дней недели
+  const days = [
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday",
+  ];
+
+  // Темы и иконки
+  const themes = ["light", "dark", "gothic"];
+  const themeIcons = { light: "☀️", dark: "🌙", gothic: "🦇" };
+
+  // === TASKS: добавление ===
+  const addTask = async (day) => {
+    if (newTaskText.trim() === "") return;
+    await axios.post(
+      "https://api.plannercat.online/task",
+      { day, text: newTaskText },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
+    const response = await axios.get("https://api.plannercat.online/week", {
+      headers: { Authorization: `Bearer ${token}` },
     });
-    const response = await axios.get('https://api.plannercat.online/week', {
-        headers: { Authorization: `Bearer ${token}`}
-});
     setWeek(response.data);
-    setNewTaskText('');
+    setNewTaskText("");
     setActiveDay(null);
-};
+    showToast("Задача добавлена! 🐾");
+  };
 
-        //Переключение выполнения
-const toggleTask = async (day, taskId) => {
-    const task = week[day].find(t => t.id === taskId);
+  // === TASKS: переключение выполнения ===
+  const toggleTask = async (day, taskId) => {
+    const task = week[day].find((t) => t.id === taskId);
     if (!task) return;
-    await axios.put(`https://api.plannercat.online/task/${taskId}`, { completed: !task.completed }, {
-        headers: { Authorization: `Bearer ${token}`}
-    });
-    const response = await axios.get('https://api.plannercat.online/week', {
-        headers: { Authorization: `Bearer ${token}`}
+    await axios.put(
+      `https://api.plannercat.online/task/${taskId}`,
+      { completed: !task.completed },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
+    const response = await axios.get("https://api.plannercat.online/week", {
+      headers: { Authorization: `Bearer ${token}` },
     });
     setWeek(response.data);
-};
+  };
 
-        //Удаление задачи
-const deleteTask = async (day, taskId) => {
+  // === TASKS: удаление ===
+  const deleteTask = async (day, taskId) => {
     await axios.delete(`https://api.plannercat.online/task/${taskId}`, {
-        headers: { Authorization: `Bearer ${token}`}
+      headers: { Authorization: `Bearer ${token}` },
     });
-    const response = await axios.get('https://api.plannercat.online/week', {
-        headers: { Authorization: `Bearer ${token}` }
+    const response = await axios.get("https://api.plannercat.online/week", {
+      headers: { Authorization: `Bearer ${token}` },
     });
     setWeek(response.data);
-};
+    showToast("Задача удалена");
+  };
 
-useEffect(() => {
+  // === EFFECTS: загрузка недели при старте ===
+  useEffect(() => {
+    if (!token) return;
     const fetchWeek = async () => {
-        const response = await axios.get('https://api.plannercat.online/week', {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        setWeek(response.data);
+      const response = await axios.get("https://api.plannercat.online/week", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setWeek(response.data);
     };
     fetchWeek();
-}, [token]);
+  }, [token]);
 
-    useEffect(() => {
-    if (theme === 'dark') {
-        document.body.classList.add('dark-theme');
-        document.body.classList.remove('gothic-theme');
-    } else if (theme === 'gothic') {
-        document.body.classList.add('gothic-theme');
-        document.body.classList.remove('dark-theme');
+  // === EFFECTS: смена темы ===
+  useEffect(() => {
+    if (theme === "dark") {
+      document.body.classList.add("dark-theme");
+      document.body.classList.remove("gothic-theme");
+    } else if (theme === "gothic") {
+      document.body.classList.add("gothic-theme");
+      document.body.classList.remove("dark-theme");
     } else {
-        document.body.classList.remove('dark-theme', 'gothic-theme');
+      document.body.classList.remove("dark-theme", "gothic-theme");
     }
-}, [theme]);
+  }, [theme]);
 
-//проверка подключения
-if (!token) {
-
+  // === RENDER: если нет токена — показываем только модалку ===
+  if (!token) {
     return (
-        <div className="App">
-            <h1>Форма входа</h1>
-            <form onSubmit={handleAuth}>
-                <input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Логин"
-                required
-                />
-                <input value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Пароль"
-                required
-                />
-                <button type="submit">
-                    {isRegister ? 'Зарегестрироваться' : 'Войти'}
-                </button>
-            </form>
-            <button className="switch-auth-btn" onClick={() => setIsRegister(!isRegister)}>
-                {isRegister ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрироваться'}
-            </button>
-            {authError && <p className="auth-error">{authError}</p>}
-        </div>
+      <div className="App">
+        <h1>Plan Cat</h1>
+        <p>Войдите или зарегистрируйтесь, чтобы начать</p>
+        <button onClick={openSignIn}>Войти</button>
+        <button onClick={openSignUp}>Регистрация</button>
+
+        <AuthModal
+          isOpen={isModalOpen}
+          mode={authMode}
+          onClose={closeModal}
+          onSwitchMode={switchMode}
+          onSubmit={handleAuth}
+        />
+
+        <Toast
+          message={toastMessage}
+          isVisible={isToastVisible}
+          onClose={() => setIsToastVisible(false)}
+        />
+      </div>
     );
-}
+  }
 
-return (
-    
-    <div className={`App ${theme === 'dark' ? 'dark-theme' : theme === 'gothic' ? 'gothic-theme' : ''}`}>
-<button
-    onClick={() => {
-        const currentIndex = themes.indexOf(theme);
-        const nextIndex = (currentIndex + 1) % themes.length;
-        setTheme(themes[nextIndex]);
-    }}
-    style={{
-        position: 'absolute',
-        top: '20px',
-        right: '20px',
-        background: 'none',
-        border: 'none',
-        fontSize: '24px',
-        cursor: 'pointer',
-        boxShadow: 'none',
-        color: theme === 'dark' ? '#e2e8f0' : theme === 'gothic' ? '#c0c0c0' : '#1f2937',
-        zIndex: 10,
-    }}
->
-    {themeIcons[theme]}
-</button>
-    {theme === 'gothic' && (
-    <div className="ghost-container">
-        <div className="ghost-body">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
-    </div>
-)}
-        <h1>Task Planner</h1>
+  // === RENDER: основной интерфейс ===
+  return (
+    <div
+      className={`App ${theme === "dark" ? "dark-theme" : theme === "gothic" ? "gothic-theme" : ""}`}
+    >
+      {/* Кнопка смены темы */}
+      <div className={`theme-toggle ${isThemeMenuOpen ? "theme-toggle--open" : ""}`}>
+        <button
+          type="button"
+          className="theme-toggle__current"
+          onClick={() => setIsThemeMenuOpen(!isThemeMenuOpen)}
+          aria-label="Открыть выбор темы"
+          aria-expanded={isThemeMenuOpen}
+        >
+          <span>{themeIcons[theme]}</span>
+          <span className="theme-toggle__arrow">▼</span>
+        </button>
 
-        <div className="week-grid">
-            {days.map((day) => (
-                <div key={day} className="day-column">
-        <h2 className="day-header">{day}</h2>
-
-<div>
-    {/* Круговой прогресс-бар */}
-    {(() => {
-        const completedCount = week[day].filter(task => task.completed).length;
-        const totalCount = week[day].length;
-        const percent = totalCount === 0 ? 0 : Math.round((completedCount / totalCount) * 100);
-        const radius = 22;
-        const circumference = 2 * Math.PI * radius;
-        const offset = circumference - (circumference * percent) / 100;
-
-        return (
-            <div style={{ width: '60px', height: '60px', position: 'relative', margin: '0 auto 10px' }}>
-    <svg width="60" height="60" viewBox="0 0 60 60">
-        <circle
-            cx="30"
-            cy="30"
-            r={radius}
-            fill="none"
-            stroke="var(--progress-bg)"
-            strokeWidth="6"
-        />
-        <circle
-            cx="30"
-            cy="30"
-            r={radius}
-            fill="none"
-            stroke="var(--progress-fill)"
-            strokeWidth="6"
-            strokeDasharray={circumference}
-            strokeDashoffset={offset}
-            strokeLinecap="round"
-            transform="rotate(-90 30 30)"
-            style={{ transition: 'stroke-dashoffset 0.5s ease' }}
-        />
-    </svg>
-    <div style={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        fontSize: '14px',
-        fontWeight: 'bold',
-        color: 'var(--text)',
-    }}>
-        {percent}%
-    </div>
-</div>
-        );
-    })()}
-</div>
-
-        <ul className="day-tasks">
-            {week[day].map((task) => (
-                <li
-                    key={task.id}
-                    className={task.completed ? "task-completed" : ""}
-                    onClick={() => toggleTask(day, task.id)}
-                >
-                    {task.text}
-                    <button
-                        className="delete-btn"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            deleteTask(day, task.id);
-                        }}
-                    >
-                        ✕
-                    </button>
-                </li>
-            ))}
-        </ul>
-
-        {activeDay === day ? (
-            <div>
-                <form
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        addTask(day);
-                    }}
-                >
-                    <input
-                        type="text"
-                        value={newTaskText}
-                        onChange={(e) => setNewTaskText(e.target.value)}
-                        placeholder="Add Task"
-                        autoFocus
-                    />
-                    <button type="submit">Add Task</button>
-                </form>
-            </div>
-        ) : (
-            <button className="add-btn" onClick={() => setActiveDay(day)}>
-                + Add Task
+        <div className="theme-toggle__menu">
+          {themes.map((themeName) => (
+            <button
+              key={themeName}
+              type="button"
+              className={theme === themeName ? "theme-toggle__button theme-toggle__button--active" : "theme-toggle__button"}
+              onClick={() => {
+                setTheme(themeName);
+                setIsThemeMenuOpen(false);
+              }}
+              aria-label={`Тема: ${themeName}`}
+              title={themeName}
+            >
+              {themeIcons[themeName]}
             </button>
-        )}
-                </div>
-            ))}
+          ))}
         </div>
-        <Footer />
+      </div>
+
+      {/* Призрак для готической темы */}
+      {theme === "gothic" && (
+        <div className="ghost-container">
+          <div className="ghost-body">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+      )}
+
+      {/* Шапка */}
+      <Header onSignIn={openSignIn} onSignUp={openSignUp} />
+
+      <main>
+        <div className="page-header">
+          <p>Организуй свои дни легко и стильно с пушистым помощником 🐾</p>
+        </div>
+
+        {/* Сетка дней */}
+        <div className="week-grid">
+          {days.map((day) => (
+            <DayCard
+              key={day}
+              day={day}
+              tasks={week[day]}
+              onAddTask={() => setActiveDay(day)}
+              onToggleTask={(index) => toggleTask(day, week[day][index].id)}
+              onDeleteTask={(index) => deleteTask(day, week[day][index].id)}
+            />
+          ))}
+        </div>
+
+        {/* Форма добавления задачи (появляется при выборе дня) */}
+        {activeDay && (
+          <div className="add-task-form">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                addTask(activeDay);
+              }}
+            >
+              <input
+                type="text"
+                value={newTaskText}
+                onChange={(e) => setNewTaskText(e.target.value)}
+                placeholder="Новая задача"
+                autoFocus
+              />
+              <button type="submit">Добавить</button>
+              <button type="button" onClick={() => setActiveDay(null)}>
+                Отмена
+              </button>
+            </form>
+          </div>
+        )}
+      </main>
+
+      <Footer />
+
+      {/* Модалка входа/регистрации (для случая, когда токен есть, но пользователь хочет перелогиниться) */}
+      <AuthModal
+        isOpen={isModalOpen}
+        mode={authMode}
+        onClose={closeModal}
+        onSwitchMode={switchMode}
+        onSubmit={handleAuth}
+      />
+
+      {/* Уведомления */}
+      <Toast
+        message={toastMessage}
+        isVisible={isToastVisible}
+        onClose={() => setIsToastVisible(false)}
+      />
     </div>
-);
+  );
 };
 
 export default App;

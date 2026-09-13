@@ -1,0 +1,25 @@
+// Цвета
+$color-bg: #F5F0E6;
+$color-accent-black: #1A1A1A;
+$color-gold: #D4AF37;
+$color-progress-bg: #E0E5EC;
+$color-white: #FFFFFF;
+$color-gray-light: #F9F8F6;
+$color-gray-text: #6B7280;
+$color-red: #EF4444;
+
+// Шрифты
+$font-heading: 'Montserrat', sans-serif;
+$font-body: 'Inter', sans-serif;
+
+// Тени (нео-брутализм)
+$shadow-sm: 2px 2px 0px #{$color-accent-black};
+$shadow-md: 4px 4px 0px #{$color-accent-black};
+$shadow-lg: 6px 6px 0px #{$color-accent-black};
+$shadow-gold: 4px 4px 0px #{$color-gold};
+
+// Скругления
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-lg: 16px;
+$radius-xl: 24px;

@@ -1,0 +1,129 @@
+@use '../../styles/variables' as *;
+
+.header {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid $color-accent-black;
+    padding: 16px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+
+    &__inner {
+        max-width: 1280px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+    }
+
+    &__logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+
+        &:hover .header__logo-circle {
+            transform: translate(2px, 2px);
+        }
+    }
+
+&__logo-circle {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+&__logo-image {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+    &__logo-svg {
+        width: 28px;
+        height: 28px;
+        fill: $color-accent-black;
+    }
+
+    &__logo-eye {
+        fill: $color-bg;
+    }
+
+    &__logo-mouth {
+        stroke: $color-bg;
+    }
+
+    &__logo-text {
+        font-family: $font-heading;
+        font-weight: 900;
+        font-size: 20px;
+        letter-spacing: 1px;
+        color: $color-accent-black;
+
+        @media (max-width: 640px) {
+            display: none;
+        }
+    }
+
+    &__title {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: $font-heading;
+        font-weight: 900;
+        font-size: 24px;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: $color-accent-black;
+
+        @media (max-width: 768px) {
+            display: none;
+        }
+    }
+
+    &__actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    &__btn {
+        padding: 8px 16px;
+        font-size: 14px;
+        font-weight: 600;
+        border: 2px solid $color-accent-black;
+        border-radius: $radius-md;
+        background: transparent;
+        color: $color-accent-black;
+        cursor: pointer;
+        box-shadow: $shadow-sm;
+        transition: all 0.15s ease;
+
+        &:hover {
+            background: $color-accent-black;
+            color: $color-white;
+        }
+
+        &:active {
+            transform: translate(1px, 1px);
+            box-shadow: none;
+        }
+
+        &--filled {
+            background: $color-accent-black;
+            color: $color-white;
+
+            &:hover {
+                background: transparent;
+                color: $color-accent-black;
+            }
+        }
+    }
+}

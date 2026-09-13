@@ -1,0 +1,64 @@
+@use '../../styles/variables' as *;
+
+.task-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: $color-gray-light;
+    border: 1px solid rgba(26, 26, 26, 0.2);
+    border-radius: $radius-md;
+    padding: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    transition: border-color 0.15s ease;
+
+    &:hover {
+        border-color: $color-accent-black;
+    }
+
+    &__label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        flex-grow: 1;
+        overflow: hidden;
+        margin-right: 8px;
+    }
+
+    &__checkbox {
+        width: 16px;
+        height: 16px;
+        border: 1px solid $color-accent-black;
+        border-radius: 4px;
+        accent-color: $color-gold;
+        cursor: pointer;
+    }
+
+    &__text {
+        color: $color-accent-black;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &--done {
+            text-decoration: line-through;
+            color: #9CA3AF;
+        }
+    }
+
+    &__delete {
+        background: none;
+        border: none;
+        color: #9CA3AF;
+        font-size: 18px;
+        font-weight: 700;
+        cursor: pointer;
+        padding: 0 4px;
+        transition: color 0.15s ease;
+
+        &:hover {
+            color: $color-red;
+        }
+    }
+}
