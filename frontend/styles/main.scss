@@ -335,6 +335,79 @@ h1, h2, h3, h4, h5, h6 {
     }
 }
 
+// === Личный кабинет ===
+.profile-page {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 48px 20px;
+}
+
+.profile-card {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 28px;
+    background: var(--card-bg);
+    border: 2px solid var(--card-border);
+    border-radius: $radius-lg;
+    box-shadow: $shadow-md;
+    color: var(--text);
+}
+
+.profile-card h2 {
+    margin: 0;
+}
+
+.profile-card button {
+    @include neo-button;
+    align-self: flex-start;
+}
+
+.profile-card .danger {
+    background: #c0392b;
+    color: #fff;
+}
+
+.profile-card .secondary {
+    background: transparent;
+    color: var(--text);
+}
+
+.profile-row,
+.profile-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.profile-actions {
+    flex-wrap: wrap;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.field input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid var(--card-border);
+    border-radius: $radius-md;
+    background: var(--input-bg);
+    color: var(--text);
+    font: inherit;
+}
+
+.error {
+    color: #c0392b;
+}
+
+.success {
+    color: #218c5a;
+}
+
 // === Кнопка смены темы ===
 .theme-toggle {
     position: fixed;

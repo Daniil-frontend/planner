@@ -1,7 +1,6 @@
 import './Header.scss';
-import logo from '../../public/logo-autumn.jpg'
 
-const Header = ({ onSignIn, onSignUp, showAuthActions = true }) => {
+const Header = ({ onSignIn, onSignUp, onProfile, showAuthActions = true }) => {
     return (
         <header className="header">
             <div className="header__inner">
@@ -26,6 +25,11 @@ const Header = ({ onSignIn, onSignUp, showAuthActions = true }) => {
                             Регистрация
                         </button>
                     </div>
+                )}
+                {onProfile && (
+                    <button className="header__btn header__profile-btn" onClick={onProfile}>
+                        Профиль
+                    </button>
                 )}
             </div>
         </header>

@@ -4,14 +4,13 @@ import Header from "../components/Header/Header";
 import DayCard from "../components/DayCard/DayCard";
 import AuthModal from "../components/AuthModal/AuthModal";
 import Toast from "../components/Toast/Toast";
-import axios from "axios";
+import Profile from "../pages/Profile/Profile";
+import api from "../utils/api";
 
-const API_URL = "https://api.plannercat.online";
+const API_URL = import.meta.env.VITE_API_URL || "https://api.plannercat.online";
 
 const App = () => {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState("signin");
@@ -30,19 +29,11 @@ const App = () => {
   const [newTaskText, setNewTaskText] = useState("");
   const [theme, setTheme] = useState("light");
   const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
-  const days = [
-    "monday",
-    "tuesday",
-    "wednesday",
-    "thursday",
-    "friday",
-    "saturday",
-    "sunday",
-  ];
+  const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
   const themes = ["light", "dark", "gothic"];
   const themeIcons = { light: "☀️", dark: "🌙", gothic: "🦇" };
-  const authHeaders = { Authorization: "Bearer " + token };
 
   const showToast = (message) => {
     setToastMessage(message);
@@ -61,6 +52,13 @@ const App = () => {
 
   const closeModal = () => setIsModalOpen(false);
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setToken("");
+    setIsProfileOpen(false);
+  };
+
   const switchMode = () => {
     setAuthMode(authMode === "signin" ? "signup" : "signin");
   };
@@ -68,13 +66,10 @@ const App = () => {
   const handleAuth = async ({ username, password, mode }) => {
     try {
       if (mode === "signup") {
-        await axios.post(`${API_URL}/register`, { username, password });
+        await api.post("/register", { username, password });
       }
 
-      const response = await axios.post(`${API_URL}/login`, {
-        username,
-        password,
-      });
+      const response = await api.post("/login", { username, password });
       const nextToken = response.data.token;
       localStorage.setItem("token", nextToken);
       setToken(nextToken);
@@ -89,9 +84,7 @@ const App = () => {
   };
 
   const fetchWeek = async () => {
-    const response = await axios.get(`${API_URL}/week`, {
-      headers: authHeaders,
-    });
+    const response = await api.get("/week");
     setWeek(response.data);
   };
 
@@ -99,11 +92,7 @@ const App = () => {
     const text = newTaskText.trim();
     if (!text) return;
 
-    await axios.post(
-      `${API_URL}/task`,
-      { day, text },
-      { headers: authHeaders },
-    );
+    await api.post("/task", { day, text });
     await fetchWeek();
     setNewTaskText("");
     setActiveDay(null);
@@ -114,18 +103,12 @@ const App = () => {
     const task = week[day].find((item) => item.id === taskId);
     if (!task) return;
 
-    await axios.put(
-      `${API_URL}/task/${taskId}`,
-      { completed: !task.completed },
-      { headers: authHeaders },
-    );
+    await api.put(`/task/${taskId}`, { completed: !task.completed });
     await fetchWeek();
   };
 
   const deleteTask = async (day, taskId) => {
-    await axios.delete(`${API_URL}/task/${taskId}`, {
-      headers: authHeaders,
-    });
+    await api.delete(`/task/${taskId}`);
     await fetchWeek();
     showToast("Задача удалена");
   };
@@ -147,13 +130,8 @@ const App = () => {
           <h1>Plan Cat</h1>
           <p>Войдите или зарегистрируйтесь, чтобы начать</p>
           <div className="login-page__actions">
-            <button className="login-page__button" onClick={openSignIn}>
-              Войти
-            </button>
-            <button
-              className="login-page__button login-page__button--filled"
-              onClick={openSignUp}
-            >
+            <button className="login-page__button" onClick={openSignIn}>Войти</button>
+            <button className="login-page__button login-page__button--filled" onClick={openSignUp}>
               Регистрация
             </button>
           </div>
@@ -175,9 +153,7 @@ const App = () => {
   }
 
   return (
-    <div
-      className={`App ${theme === "dark" ? "dark-theme" : theme === "gothic" ? "gothic-theme" : ""}`}
-    >
+    <div className={`App ${theme === "dark" ? "dark-theme" : theme === "gothic" ? "gothic-theme" : ""}`}>
       <div className={`theme-toggle ${isThemeMenuOpen ? "theme-toggle--open" : ""}`}>
         <button
           type="button"
@@ -224,8 +200,17 @@ const App = () => {
         </div>
       )}
 
-      <Header showAuthActions={false} />
+      <Header
+        showAuthActions={false}
+        onProfile={() => setIsProfileOpen(true)}
+      />
 
+      {isProfileOpen ? (
+        <Profile
+          onBack={() => setIsProfileOpen(false)}
+          onLogout={handleLogout}
+        />
+      ) : (
       <main>
         <div className="page-header">
           <p>Организуй свои дни легко и стильно с пушистым помощником 🐾</p>
@@ -242,6 +227,7 @@ const App = () => {
             />
           ))}
         </div>
+
         {activeDay && (
           <div className="add-task-form">
             <form
@@ -265,6 +251,7 @@ const App = () => {
           </div>
         )}
       </main>
+      )}
 
       <Footer />
       <AuthModal

@@ -86,6 +86,69 @@ app.post('/login', async (req, res) => {
     }
 });
 
+app.get('/me', authMiddleware, async (req, res) => {
+    try {
+        const result = await pool.query(
+            'SELECT id, username FROM users WHERE id = $1',
+            [req.userId]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json(result.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.put('/me', authMiddleware, async (req, res) => {
+    const { username, currentPassword, newPassword } = req.body;
+
+    if (!username || !username.trim()) {
+        return res.status(400).json({ error: 'Username is required' });
+    }
+
+    try {
+        const userResult = await pool.query(
+            'SELECT id, username, password_hash FROM users WHERE id = $1',
+            [req.userId]
+        );
+        const user = userResult.rows[0];
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        if (newPassword) {
+            if (!currentPassword) {
+                return res.status(400).json({ error: 'Current password is required' });
+            }
+
+            const isValid = await bcrypt.compare(currentPassword, user.password_hash);
+            if (!isValid) {
+                return res.status(401).json({ error: 'Invalid current password' });
+            }
+        }
+
+        const passwordHash = newPassword
+            ? await bcrypt.hash(newPassword, 10)
+            : user.password_hash;
+        const result = await pool.query(
+            'UPDATE users SET username = $1, password_hash = $2 WHERE id = $3 RETURNING id, username',
+            [username.trim(), passwordHash, req.userId]
+        );
+
+        res.json(result.rows[0]);
+    } catch (err) {
+        if (err.code === '23505') {
+            return res.status(409).json({ error: 'Username already exists' });
+        }
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // Получить неделю
 app.get('/week', authMiddleware, async (req, res) => {
     try {
